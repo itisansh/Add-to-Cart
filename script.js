@@ -9,9 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const products = [
     { id: 1, item: "Product 1", price: 29.99 },
     { id: 2, item: "Product 2", price: 19.99 },
-    { id: 3, item: "Product 3", price: 59.999 },
+    { id: 3, item: "Product 3", price: 59.99 },
   ];
-  // ye 59.999 dikkat deta hai jab cart to render karte hai kyuki toFixed(2) hamne sirf product list me lagaya hai na ki array me stored item pe
   const cart = JSON.parse(localStorage.getItem("cartArray")) || [];
 
   renderCart(cart);
@@ -22,11 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
     productDiv.classList.add("product");
     const price = p.price.toFixed(2);
     productDiv.innerHTML = `<span> ${p.item} - $${price}</span> <button data-id="${p.id}" >add</button>`;
-    //The blunt answer is that the product.id is written inside double quotes ("") because it is being inserted as the value of an HTML attribute, and all HTML attribute values must be enclosed in quotes.
     productList.appendChild(productDiv);
   });
 
-  // Add to Cart btn
   productList.addEventListener("click", (e) => {
     if (e.target.tagName === "BUTTON") {
       const btn = e.target;
@@ -68,38 +65,29 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.tagName === "BUTTON") {
       const btn = e.target;
 
-      // Use parseInt() as your IDs are numbers
       const productIdToRemove = parseInt(btn.getAttribute("data-id"));
 
-      //DOM removal of that product from cart-items
       e.target.closest(".cart-container").remove();
-
-      // 🛑 CRITICAL DATA FIX: Use findIndex() and splice()
-      // MUSkil code hai dhya rakho splice aur findIndex use karna seekho
-      // Find the index of the FIRST product object in the array
-      // that matches the ID we want to delete.
       const indexToRemove = cart.findIndex(
         (cartProduct) => cartProduct.id === productIdToRemove
       );
 
       if (indexToRemove !== -1) {
-        // Use splice() to remove only ONE element at that found index
+
         cart.splice(indexToRemove, 1);
 
         console.log(
           `Removed product at index ${indexToRemove}. New cart length: ${cart.length}`
         );
 
-        // 3. Update the UI and Storage
         totalCartPrice(cart);
         saveProducts();
-        renderCart(cart); // Rerender to show empty message if needed
+        renderCart(cart);
       }
     }
   });
 
   function totalCartPrice(cart) {
-    // Calculates total from the current state of the 'cart' array
     let total = 0;
     cart.forEach((product) => {
       total += product.price;
@@ -113,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cartTotal.classList.add("hidden");
     renderCart(cart);
     totalCartPrice(cart);
-    alert("madarchod");
+    alert("Checkout Successful");
     saveProducts();
   });
 
@@ -121,3 +109,4 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("cartArray", JSON.stringify(cart));
   }
 });
+
